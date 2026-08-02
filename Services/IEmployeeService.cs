@@ -1,4 +1,5 @@
 ﻿using EmployeeManagement.Api.Models;
+using EmployeeManagement.Api.Dtos;
 
 namespace EmployeeManagement.Api.Services;
 
@@ -9,4 +10,5 @@ public interface IEmployeeService
     List<Employee> GetHighEarners();
     List<Employee> GetEmployeesByDepartment(string department);
     List<Employee> GetEmployeesOrderedBySalary();
+    Task<Employee> CreateEmployeeAsync(CreateEmployeeDto createEmployee);
 }

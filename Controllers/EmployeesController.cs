@@ -1,4 +1,4 @@
-﻿using EmployeeManagement.Api.Models;
+﻿using EmployeeManagement.Api.Dtos;
 using EmployeeManagement.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,9 +18,10 @@ public class EmployeesController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetEmployees()
     {
-        var employees = await _employeeService.GetEmployeesAsync();
+        /*var employees = await _employeeService.GetEmployeesAsync();
 
-        return Ok(employees);
+        return Ok(employees);*/
+        return Ok(await _employeeService.GetEmployeesAsync());
     }
 
     [HttpGet("{id}")]
@@ -52,5 +53,11 @@ public class EmployeesController : ControllerBase
     public IActionResult GetEmployeesOrderedBySalary()
     {
         return Ok(_employeeService.GetEmployeesOrderedBySalary());
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateEmployee([FromBody]CreateEmployeeDto createEmployee)
+    {
+        return Ok(await _employeeService.CreateEmployeeAsync(createEmployee));
     }
 }
