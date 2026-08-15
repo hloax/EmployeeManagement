@@ -19,10 +19,9 @@ public class EmployeeService : IEmployeeService
         return await _context.Employees.ToListAsync();
     }
 
-    public Employee? GetEmployeeById(int id)
+    public async Task<Employee?> GetEmployeeByIdAsync(int id)
     {
-        return _context.Employees.
-            FirstOrDefault(e => e.Id == id);
+        return await _context.Employees.FindAsync(id);
     }
 
     public List<Employee> GetHighEarners()
@@ -59,6 +58,26 @@ public class EmployeeService : IEmployeeService
         };
 
         await _context.Employees.AddAsync(employee);
+        await _context.SaveChangesAsync();
+
+        return employee;
+    }
+
+    public async Task<Employee?> UpdateEmployeeAsync(int id, UpdateEmployeeDto dto)
+    {
+        var employee = await _context.Employees.FindAsync(id);
+
+        if (employee == null)
+        {
+            return null;
+        }
+
+        employee.FirstName = dto.FirstName;
+        employee.LastName = dto.LastName;
+        employee.Email = dto.Email;
+        employee.Department = dto.Department;
+        employee.Salary = dto.Salary;
+
         await _context.SaveChangesAsync();
 
         return employee;

@@ -1,4 +1,5 @@
 ﻿using EmployeeManagement.Api.Dtos;
+using EmployeeManagement.Api.Models;
 using EmployeeManagement.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,16 +19,13 @@ public class EmployeesController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetEmployees()
     {
-        /*var employees = await _employeeService.GetEmployeesAsync();
-
-        return Ok(employees);*/
         return Ok(await _employeeService.GetEmployeesAsync());
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetEmploeeById(int id)
+    public async Task<IActionResult> GetEmploeeById(int id)
     {
-        var employee = _employeeService.GetEmployeeById(id);
+        var employee = await _employeeService.GetEmployeeByIdAsync(id);
 
         if (employee == null)
         {
@@ -58,6 +56,25 @@ public class EmployeesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateEmployee([FromBody]CreateEmployeeDto createEmployee)
     {
-        return Ok(await _employeeService.CreateEmployeeAsync(createEmployee));
+        var employee = await _employeeService.CreateEmployeeAsync(createEmployee);
+
+        return CreatedAtAction(
+            nameof(GetEmploeeById),
+            new { id = employee.Id },
+            employee
+        );
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateEmployee(int id, UpdateEmployeeDto dto)
+    {
+        var employee = await _employeeService.UpdateEmployeeAsync(id, dto);
+
+        if (employee == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(employee);
     }
 }

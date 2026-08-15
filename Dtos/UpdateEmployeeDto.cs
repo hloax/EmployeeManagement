@@ -2,7 +2,7 @@
 
 namespace EmployeeManagement.Api.Dtos;
 
-public class CreateEmployeeDto
+public class UpdateEmployeeDto
 {
     [Required]
     [StringLength(100)]
@@ -14,10 +14,10 @@ public class CreateEmployeeDto
 
     [Required]
     [EmailAddress]
-    public string Email { get; set;  } = string.Empty;
+    public string Email { get; set; } = string.Empty;
 
-    [Range(0, double.MaxValue)]
-    public decimal Salary { get; set;  }
+    [Range(1, 1_000_000)]
+    public decimal Salary { get; set; }
 
     [Required]
     public string Department { get; set; } = string.Empty;
