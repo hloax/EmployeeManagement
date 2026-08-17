@@ -77,4 +77,17 @@ public class EmployeesController : ControllerBase
 
         return Ok(employee);
     }
+
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> PatchEmployee(int id, PatchEmployeeDto dto)
+    {
+        var employee = await _employeeService.PatchEmployeeAsync(id, dto);
+
+        if (employee == null)
+        {
+            return NotFound();
+        }
+
+        return Ok(employee);
+    }
 }

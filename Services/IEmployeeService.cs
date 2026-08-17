@@ -12,5 +12,6 @@ public interface IEmployeeService
     List<Employee> GetEmployeesOrderedBySalary();
     Task<Employee> CreateEmployeeAsync(CreateEmployeeDto createEmployee);
     Task<Employee?> UpdateEmployeeAsync(int id, UpdateEmployeeDto dto);
+    Task<Employee?> PatchEmployeeAsync(int id, PatchEmployeeDto dto);
 
 }

@@ -2,6 +2,7 @@
 using EmployeeManagement.Api.Data;
 using EmployeeManagement.Api.Dtos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace EmployeeManagement.Api.Services;
 
@@ -77,6 +78,45 @@ public class EmployeeService : IEmployeeService
         employee.Email = dto.Email;
         employee.Department = dto.Department;
         employee.Salary = dto.Salary;
+
+        await _context.SaveChangesAsync();
+
+        return employee;
+    }
+
+    public async Task<Employee?> PatchEmployeeAsync(int id, PatchEmployeeDto dto)
+    {
+        var employee = await _context.Employees.FindAsync(id);
+
+        if (employee == null)
+        {
+            return null;
+        }
+
+        if (dto.FirstName != null)
+        {
+            employee.FirstName = dto.FirstName;
+        }
+
+        if (dto.LastName != null)
+        {
+            employee.LastName = dto.LastName;
+        }
+
+        if (dto.Email != null)
+        {
+            employee.Email = dto.Email;
+        }
+
+        if (dto.Salary.HasValue)
+        {
+            employee.Salary = dto.Salary.Value;
+        }
+
+        if (dto.Department != null)
+        {
+            employee.Department = dto.Department;
+        }
 
         await _context.SaveChangesAsync();
 
