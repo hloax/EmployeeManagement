@@ -122,4 +122,20 @@ public class EmployeeService : IEmployeeService
 
         return employee;
     }
+
+    public async Task<bool> DeleteEmployeeAsync(int id)
+    {
+        var employee = await _context.Employees.FindAsync(id);
+
+        if (employee == null)
+        {
+            return false;
+        }
+
+        _context.Employees.Remove(employee);
+
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
 }
