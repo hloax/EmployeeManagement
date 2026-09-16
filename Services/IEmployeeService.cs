@@ -1,18 +1,17 @@
-﻿using EmployeeManagement.Api.Models;
-using EmployeeManagement.Api.Dtos;
+﻿using EmployeeManagement.Api.Dtos;
 
 namespace EmployeeManagement.Api.Services;
 
 public interface IEmployeeService
 {
-    Task<List<Employee>> GetEmployeesAsync();
-    Task<Employee?> GetEmployeeByIdAsync(int id);
-    List<Employee> GetHighEarners();
-    List<Employee> GetEmployeesByDepartment(string department);
-    List<Employee> GetEmployeesOrderedBySalary();
-    Task<Employee> CreateEmployeeAsync(CreateEmployeeDto createEmployee);
-    Task<Employee?> UpdateEmployeeAsync(int id, UpdateEmployeeDto dto);
-    Task<Employee?> PatchEmployeeAsync(int id, PatchEmployeeDto dto);
+    Task<List<EmployeeResponseDto>> GetEmployeesAsync();
+    Task<EmployeeResponseDto?> GetEmployeeByIdAsync(int id);
+    List<EmployeeResponseDto> GetHighEarners();
+    List<EmployeeResponseDto> GetEmployeesByDepartment(string department);
+    List<EmployeeResponseDto> GetEmployeesOrderedBySalary();
+    Task<EmployeeResponseDto> CreateEmployeeAsync(CreateEmployeeDto createEmployee);
+    Task<EmployeeResponseDto?> UpdateEmployeeAsync(int id, UpdateEmployeeDto dto);
+    Task<EmployeeResponseDto?> PatchEmployeeAsync(int id, PatchEmployeeDto dto);
     Task<bool> DeleteEmployeeAsync(int id);
 
 }

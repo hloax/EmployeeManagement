@@ -15,38 +15,61 @@ public class EmployeeService : IEmployeeService
     {
         _context = context;
     }
-    public async Task<List<Employee>> GetEmployeesAsync()
+    public async Task<List<EmployeeResponseDto>> GetEmployeesAsync()
     {
-        return await _context.Employees.ToListAsync();
+        var employees = await _context.Employees.ToListAsync();
+
+        return employees
+            .Select(MapToResponse)
+            .ToList();
     }
 
-    public async Task<Employee?> GetEmployeeByIdAsync(int id)
+    public async Task<EmployeeResponseDto?> GetEmployeeByIdAsync(int id)
     {
-        return await _context.Employees.FindAsync(id);
+        var employee = await _context.Employees.FindAsync(id);
+
+        if (employee == null)
+        {
+            return null;
+        }
+
+        return MapToResponse(employee);
     }
 
-    public List<Employee> GetHighEarners()
+    public List<EmployeeResponseDto> GetHighEarners()
     {
-        return _context.Employees
+        var employee = _context.Employees
             .Where(e => e.Salary > 50000)
             .ToList();
-    }
 
-    public List<Employee> GetEmployeesByDepartment(string department)
-    {
-        return _context.Employees
-           .Where(e => e.Department == department)
-           .ToList();
-    }
-
-    public List<Employee> GetEmployeesOrderedBySalary()
-    {
-        return _context.Employees
-            .OrderByDescending(e => e.Salary)
+        return employee
+            .Select(MapToResponse)
             .ToList();
     }
 
-    public async Task<Employee> CreateEmployeeAsync(CreateEmployeeDto createEmployee)
+    public List<EmployeeResponseDto> GetEmployeesByDepartment(string department)
+    {
+        var employee = _context.Employees
+           .Where(e => e.Department == department)
+           .ToList();
+
+        return employee
+            .Select(MapToResponse)
+            .ToList();
+    }
+
+    public List<EmployeeResponseDto> GetEmployeesOrderedBySalary()
+    {
+        var employee = _context.Employees
+            .OrderByDescending(e => e.Salary)
+            .ToList();
+
+        return employee
+            .Select(MapToResponse)
+            .ToList();
+    }
+
+    public async Task<EmployeeResponseDto> CreateEmployeeAsync(CreateEmployeeDto createEmployee)
     {
         var employee = new Employee
         {
@@ -61,10 +84,10 @@ public class EmployeeService : IEmployeeService
         await _context.Employees.AddAsync(employee);
         await _context.SaveChangesAsync();
 
-        return employee;
+        return MapToResponse(employee);
     }
 
-    public async Task<Employee?> UpdateEmployeeAsync(int id, UpdateEmployeeDto dto)
+    public async Task<EmployeeResponseDto?> UpdateEmployeeAsync(int id, UpdateEmployeeDto dto)
     {
         var employee = await _context.Employees.FindAsync(id);
 
@@ -81,10 +104,10 @@ public class EmployeeService : IEmployeeService
 
         await _context.SaveChangesAsync();
 
-        return employee;
+        return MapToResponse(employee);
     }
 
-    public async Task<Employee?> PatchEmployeeAsync(int id, PatchEmployeeDto dto)
+    public async Task<EmployeeResponseDto?> PatchEmployeeAsync(int id, PatchEmployeeDto dto)
     {
         var employee = await _context.Employees.FindAsync(id);
 
@@ -120,7 +143,7 @@ public class EmployeeService : IEmployeeService
 
         await _context.SaveChangesAsync();
 
-        return employee;
+        return MapToResponse(employee);
     }
 
     public async Task<bool> DeleteEmployeeAsync(int id)
@@ -137,5 +160,21 @@ public class EmployeeService : IEmployeeService
         await _context.SaveChangesAsync();
 
         return true;
+    }
+
+
+    private EmployeeResponseDto MapToResponse(Employee employee)
+    {
+        return new EmployeeResponseDto
+        {
+            Id = employee.Id,
+            FirstName = employee.FirstName,
+            LastName = employee.LastName,
+            Email = employee.Email,
+            Salary = employee.Salary,
+            Department = employee.Department,
+            CreatedAt = employee.CreatedAt,
+            UpdatedAt = employee.UpdatedAt
+        };
     }
 }
