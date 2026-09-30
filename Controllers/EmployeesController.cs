@@ -1,5 +1,4 @@
 ﻿using EmployeeManagement.Api.Dtos;
-using EmployeeManagement.Api.Models;
 using EmployeeManagement.Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
