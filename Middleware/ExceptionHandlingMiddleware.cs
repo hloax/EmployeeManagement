@@ -32,7 +32,7 @@ public class ExceptionHandlingMiddleware
         var response = new
         {
             status = 500,
-            message = "An unexpected error occured."
+            message = "An unexpected error occurred."
         };
 
         await context.Response.WriteAsync(
