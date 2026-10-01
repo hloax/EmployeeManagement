@@ -16,9 +16,11 @@ public class EmployeesController : ControllerBase
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetEmployees()
+    public async Task<IActionResult> GetEmployees(
+        [FromQuery] EmployeeQueryDto query)
     {
-        return Ok(await _employeeService.GetEmployeesAsync());
+        //throw new Exception("Testing logging");
+        return Ok(await _employeeService.GetEmployeesAsync(query));
     }
 
     [HttpGet("{id}")]

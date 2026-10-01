@@ -15,9 +15,14 @@ public class EmployeeService : IEmployeeService
     {
         _context = context;
     }
-    public async Task<List<EmployeeResponseDto>> GetEmployeesAsync()
+
+    public async Task<List<EmployeeResponseDto>> GetEmployeesAsync(
+        EmployeeQueryDto query)
     {
-        var employees = await _context.Employees.ToListAsync();
+        var employees = await _context.Employees
+            .Skip((query.Page -1) * query.PageSize)
+            .Take(query.PageSize)
+            .ToListAsync();
 
         return employees
             .Select(MapToResponse)
