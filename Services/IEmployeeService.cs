@@ -4,7 +4,7 @@ namespace EmployeeManagement.Api.Services;
 
 public interface IEmployeeService
 {
-    Task<List<EmployeeResponseDto>> GetEmployeesAsync(
+    Task<PagedResponseDto<EmployeeResponseDto>> GetEmployeesAsync(
         EmployeeQueryDto query);
     
     Task<EmployeeResponseDto?> GetEmployeeByIdAsync(int id);

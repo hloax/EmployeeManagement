@@ -16,17 +16,38 @@ public class EmployeeService : IEmployeeService
         _context = context;
     }
 
-    public async Task<List<EmployeeResponseDto>> GetEmployeesAsync(
+    public async Task<PagedResponseDto<EmployeeResponseDto>> GetEmployeesAsync(
         EmployeeQueryDto query)
     {
-        var employees = await _context.Employees
+        var employeeQuery = _context.Employees.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(query.Department))
+        {
+            employeeQuery = employeeQuery
+                .Where(e => e.Department == query.Department);
+        }
+
+        var totalItems = await employeeQuery.CountAsync();
+
+        var employees = await employeeQuery
             .Skip((query.Page -1) * query.PageSize)
             .Take(query.PageSize)
             .ToListAsync();
 
-        return employees
-            .Select(MapToResponse)
-            .ToList();
+        var totalPages = (int)Math.Ceiling(
+            (double)totalItems / query.PageSize);
+
+        return new PagedResponseDto<EmployeeResponseDto>
+        {
+            Items = employees
+                .Select(MapToResponse)
+                .ToList(),
+
+            Page = query.Page,
+            PageSize = query.PageSize,
+            TotalItems = totalItems,
+            TotalPages = totalPages
+        };
     }
 
     public async Task<EmployeeResponseDto?> GetEmployeeByIdAsync(int id)

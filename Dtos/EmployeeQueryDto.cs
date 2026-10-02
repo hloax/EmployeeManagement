@@ -9,4 +9,7 @@ public class EmployeeQueryDto
 
     [Range(1, 100)]
     public int PageSize { get; set; } = 20;
+
+    public string? Department { get; set; }
+
 }
