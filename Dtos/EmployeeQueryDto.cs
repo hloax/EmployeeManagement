@@ -12,4 +12,8 @@ public class EmployeeQueryDto
 
     public string? Department { get; set; }
 
+    public string? SortBy { get; set; }
+
+    public bool Descending { get; set; } = false;
+
 }
