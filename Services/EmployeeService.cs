@@ -19,107 +19,7 @@ public class EmployeeService : IEmployeeService
     public async Task<PagedResponseDto<EmployeeResponseDto>> GetEmployeesAsync(
         EmployeeQueryDto query)
     {
-        var employeeQuery = _context.Employees.AsQueryable();
-
-        if (!string.IsNullOrWhiteSpace(query.Search))
-        {
-            employeeQuery = employeeQuery.Where(e =>
-                e.FirstName.Contains(query.Search) ||
-                e.LastName.Contains(query.Search) ||
-                e.Email.Contains(query.Search)
-            );
-        }
-
-        if (!string.IsNullOrWhiteSpace(query.Department))
-        {
-            employeeQuery = employeeQuery
-                .Where(e => e.Department == query.Department);
-        }
-
-        if (!string.IsNullOrWhiteSpace(query.SortBy))
-        {
-            switch (query.SortBy.ToLower())
-            {
-                case "id":
-                    if (query.Descending)
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderByDescending(e => e.Id);
-                    }
-                    else
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderBy(e => e.Id);
-                    }
-
-                    break;
-
-                case "firstname":
-                    if (query.Descending)
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderByDescending(e => e.FirstName);
-                    }
-                    else
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderBy(e => e.FirstName);
-                    }
-
-                    break;
-
-                case "lastname":
-                    if (query.Descending)
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderByDescending(e => e.LastName);
-                    }
-                    else
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderBy(e => e.LastName);
-                    }
-
-                    break;
-
-                case "salary":
-                    if (query.Descending)
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderByDescending(e => e.Salary);
-                    }
-                    else
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderBy(e => e.Salary);
-                    }
-
-                    break;
-
-                case "department":
-                    if (query.Descending)
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderByDescending(e => e.Department);
-                    }
-                    else
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderBy(e => e.Department);
-                    }
-
-                    break;
-
-                default:
-                    employeeQuery = employeeQuery
-                        .OrderBy(e => e.Id);
-                    break;
-            }
-        }
-        else
-        {
-            employeeQuery = employeeQuery.OrderBy(e => e.Id);
-        }
+        var employeeQuery = BuildEmployeeQuery(query);
 
         var totalItems = await employeeQuery.CountAsync();
 
@@ -296,5 +196,112 @@ public class EmployeeService : IEmployeeService
             CreatedAt = employee.CreatedAt,
             UpdatedAt = employee.UpdatedAt
         };
+    }
+
+    private IQueryable<Employee> BuildEmployeeQuery(EmployeeQueryDto query)
+    {
+        var employeeQuery = _context.Employees.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(query.Search))
+        {
+            employeeQuery = employeeQuery.Where(e =>
+                e.FirstName.Contains(query.Search) ||
+                e.LastName.Contains(query.Search) ||
+                e.Email.Contains(query.Search)
+            );
+        }
+
+        if (!string.IsNullOrWhiteSpace(query.Department))
+        {
+            employeeQuery = employeeQuery
+                .Where(e => e.Department == query.Department);
+        }
+
+        if (!string.IsNullOrWhiteSpace(query.SortBy))
+        {
+            switch (query.SortBy.ToLower())
+            {
+                case "id":
+                    if (query.Descending)
+                    {
+                        employeeQuery = employeeQuery
+                            .OrderByDescending(e => e.Id);
+                    }
+                    else
+                    {
+                        employeeQuery = employeeQuery
+                            .OrderBy(e => e.Id);
+                    }
+
+                    break;
+
+                case "firstname":
+                    if (query.Descending)
+                    {
+                        employeeQuery = employeeQuery
+                            .OrderByDescending(e => e.FirstName);
+                    }
+                    else
+                    {
+                        employeeQuery = employeeQuery
+                            .OrderBy(e => e.FirstName);
+                    }
+
+                    break;
+
+                case "lastname":
+                    if (query.Descending)
+                    {
+                        employeeQuery = employeeQuery
+                            .OrderByDescending(e => e.LastName);
+                    }
+                    else
+                    {
+                        employeeQuery = employeeQuery
+                            .OrderBy(e => e.LastName);
+                    }
+
+                    break;
+
+                case "salary":
+                    if (query.Descending)
+                    {
+                        employeeQuery = employeeQuery
+                            .OrderByDescending(e => e.Salary);
+                    }
+                    else
+                    {
+                        employeeQuery = employeeQuery
+                            .OrderBy(e => e.Salary);
+                    }
+
+                    break;
+
+                case "department":
+                    if (query.Descending)
+                    {
+                        employeeQuery = employeeQuery
+                            .OrderByDescending(e => e.Department);
+                    }
+                    else
+                    {
+                        employeeQuery = employeeQuery
+                            .OrderBy(e => e.Department);
+                    }
+
+                    break;
+
+                default:
+                    employeeQuery = employeeQuery
+                        .OrderBy(e => e.Id);
+                    break;
+            }
+        }
+        else
+        {
+            employeeQuery = employeeQuery.OrderBy(e => e.Id);
+        }
+
+        return employeeQuery;
     }
 }
