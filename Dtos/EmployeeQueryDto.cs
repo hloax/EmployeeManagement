@@ -16,4 +16,6 @@ public class EmployeeQueryDto
 
     public bool Descending { get; set; } = false;
 
+    public string? Search { get; set; }
+
 }

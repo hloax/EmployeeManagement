@@ -21,6 +21,15 @@ public class EmployeeService : IEmployeeService
     {
         var employeeQuery = _context.Employees.AsQueryable();
 
+        if (!string.IsNullOrWhiteSpace(query.Search))
+        {
+            employeeQuery = employeeQuery.Where(e =>
+                e.FirstName.Contains(query.Search) ||
+                e.LastName.Contains(query.Search) ||
+                e.Email.Contains(query.Search)
+            );
+        }
+
         if (!string.IsNullOrWhiteSpace(query.Department))
         {
             employeeQuery = employeeQuery
