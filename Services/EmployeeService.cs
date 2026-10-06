@@ -2,7 +2,6 @@
 using EmployeeManagement.Api.Data;
 using EmployeeManagement.Api.Dtos;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace EmployeeManagement.Api.Services;
 
@@ -204,10 +203,15 @@ public class EmployeeService : IEmployeeService
 
         if (!string.IsNullOrWhiteSpace(query.Search))
         {
+            var searchPattern = $"%{query.Search}%";
+
             employeeQuery = employeeQuery.Where(e =>
-                e.FirstName.Contains(query.Search) ||
-                e.LastName.Contains(query.Search) ||
-                e.Email.Contains(query.Search)
+                EF.Functions.ILike(e.FirstName, searchPattern) ||
+                EF.Functions.ILike(e.LastName, searchPattern) ||
+                EF.Functions.ILike(e.Email, searchPattern) ||
+                EF.Functions.ILike(
+                    e.FirstName + " " + e.LastName,
+                    searchPattern)
             );
         }
 
@@ -217,91 +221,57 @@ public class EmployeeService : IEmployeeService
                 .Where(e => e.Department == query.Department);
         }
 
-        if (!string.IsNullOrWhiteSpace(query.SortBy))
-        {
-            switch (query.SortBy.ToLower())
-            {
-                case "id":
-                    if (query.Descending)
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderByDescending(e => e.Id);
-                    }
-                    else
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderBy(e => e.Id);
-                    }
-
-                    break;
-
-                case "firstname":
-                    if (query.Descending)
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderByDescending(e => e.FirstName);
-                    }
-                    else
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderBy(e => e.FirstName);
-                    }
-
-                    break;
-
-                case "lastname":
-                    if (query.Descending)
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderByDescending(e => e.LastName);
-                    }
-                    else
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderBy(e => e.LastName);
-                    }
-
-                    break;
-
-                case "salary":
-                    if (query.Descending)
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderByDescending(e => e.Salary);
-                    }
-                    else
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderBy(e => e.Salary);
-                    }
-
-                    break;
-
-                case "department":
-                    if (query.Descending)
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderByDescending(e => e.Department);
-                    }
-                    else
-                    {
-                        employeeQuery = employeeQuery
-                            .OrderBy(e => e.Department);
-                    }
-
-                    break;
-
-                default:
-                    employeeQuery = employeeQuery
-                        .OrderBy(e => e.Id);
-                    break;
-            }
-        }
-        else
-        {
-            employeeQuery = employeeQuery.OrderBy(e => e.Id);
-        }
+        employeeQuery = ApplySorting(employeeQuery, query);
 
         return employeeQuery;
+    }
+
+    private IQueryable<Employee> ApplySorting(
+        IQueryable<Employee> query,
+        EmployeeQueryDto request)
+    {
+        switch (request.SortBy?.ToLower())
+        {
+            case "firstname":
+                if (request.Descending)
+                {
+                    return query.OrderByDescending(e => e.FirstName);
+                }
+
+                return query.OrderBy(e => e.FirstName);
+
+            case "lastname":
+                if (request.Descending)
+                {
+                    return query.OrderByDescending(e => e.LastName);
+                }
+
+                return query.OrderBy(e => e.LastName);
+
+            case "salary":
+                if (request.Descending)
+                {
+                    return query.OrderByDescending(e => e.Salary);
+                }
+
+                return query.OrderBy(e => e.Salary);
+
+            case "department":
+                if (request.Descending)
+                {
+                    return query.OrderByDescending(e => e.Department);
+                }
+
+                return query.OrderBy(e => e.Department);
+
+            case "id":
+            default:
+                if (request.Descending)
+                {
+                    return query.OrderByDescending(e => e.Id);
+                }
+
+                return query.OrderBy(e => e.Id);
+        }
     }
 }
